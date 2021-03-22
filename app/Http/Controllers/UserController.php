@@ -97,7 +97,7 @@ class UserController extends Controller
     {
         //thieu syntax
 
-        $user=User::where('id',$id)->update(
+        $user = User::where('id',$id)->update(
             $request->only('first_name','last_name','phone')
         );
         return response()->json($user,Response::HTTP_ACCEPTED);
