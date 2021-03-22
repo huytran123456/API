@@ -97,7 +97,7 @@ class UserController extends Controller
     {
         //
         $user=User::where('id',$id)->update(
-            $request->only('first_name','last_name','email','phone')
+            $request->only('first_name','last_name','phone')
          //   [$request['email']]
         );
         return response()->json($user,Response::HTTP_ACCEPTED);
