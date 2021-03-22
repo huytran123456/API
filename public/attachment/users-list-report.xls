@@ -1,0 +1,40 @@
+﻿<table border="1">
+									<thead>
+										<tr>
+										<th>#</th>
+											<th>Name</th>
+											<th>Email</th>
+											<th>Gender</th>
+											<th>Phone</th>
+											<th>Designation</th>
+										</tr>
+									</thead>
+
+  
+<tr>  
+<td>1</td> 
+<td>huy</td> 
+<td>htdshadow@gmail.com</td> 
+<td>Male</td> 
+<td>222</td> 
+<td>22</td> 					
+</tr>  
+  
+<tr>  
+<td>2</td> 
+<td>luthor</td> 
+<td>huytrandinh16041996@gmail.com</td> 
+<td>Female</td> 
+<td>222</td> 
+<td>1</td> 					
+</tr>  
+  
+<tr>  
+<td>3</td> 
+<td>huy</td> 
+<td>huytrandinhshadow@yahoo.com.vn</td> 
+<td>Male</td> 
+<td>2222</td> 
+<td>eeee</td> 					
+</tr>  
+</table>
