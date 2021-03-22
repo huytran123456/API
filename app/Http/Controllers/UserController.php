@@ -30,20 +30,20 @@ class UserController extends Controller
     /**
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index():JsonResponse
+    public function index(): JsonResponse
     {
         //
-        $SelectR=['*'];
-        $WhereR=[
-            ['isDelete','=',0]
+        $SelectR = ['*'];
+        $WhereR = [
+            ['isDelete', '=', 0]
         ];
-        $mod=new User();
-        $yo=$mod->GetUsers($SelectR,$WhereR);
-     //   $yo=DB::table('users')->selectRaw('*')->get();
+        $mod = new User();
+        $yo = $mod->GetUsers($SelectR, $WhereR);
+        //   $yo=DB::table('users')->selectRaw('*')->get();
         //dd($yo);
-      //  var_dump($yo);die;
-      //session('users',$yo);
-        return response()->json($yo,200);
+        //  var_dump($yo);die;
+        //session('users',$yo);
+        return response()->json($yo, 200);
     }
 
 
@@ -54,14 +54,14 @@ class UserController extends Controller
     public function store(UserRequest $request)
     {
         //
-    //  $validated = $request->validated();
-    //dd($request);
-       $user=User::insert([
-           $request->only('last_name','first_name','email')
+        //  $validated = $request->validated();
+        //dd($request);
+        $user = User::insert([
+            $request->only('last_name', 'first_name', 'email')
 
-            +['password'=>md5($request['password'])]
-       ]);
-       return response()->json($user,200);
+                + ['password' => md5($request['password'])]
+        ]);
+        return response()->json($user, 200);
     }
 
     /**
@@ -73,17 +73,18 @@ class UserController extends Controller
     public function show($id)
     {
         //
-        $SelectR=['first_name',
-                  'last_name'
-    ];
-        $WhereR=[
-            ['isDelete','=',0],
-            ['id','=',$id]
+        $SelectR = [
+            'first_name',
+            'last_name'
         ];
-        $mod=new User();
-        $user=$mod->GetUsers($SelectR,$WhereR);
-      //  return response()->json(['result'=>$result,'data'=>$user['data']]);
-       return response()->json($user);
+        $WhereR = [
+            ['isDelete', '=', 0],
+            ['id', '=', $id]
+        ];
+        $mod = new User();
+        $user = $mod->GetUsers($SelectR, $WhereR);
+        //  return response()->json(['result'=>$result,'data'=>$user['data']]);
+        return response()->json($user);
     }
 
     /**
@@ -97,10 +98,11 @@ class UserController extends Controller
     {
         //thieu syntax
 
-        $user = User::where('id',$id)->update(
-            $request->only('first_name','last_name','phone')
+        $user = User::where('id', $id)->update(
+            $request->only('first_name', 'last_name', 'phone')
         );
-        return response()->json($user,Response::HTTP_ACCEPTED);
+
+        return response()->json($user, Response::HTTP_ACCEPTED);
     }
 
     /**
@@ -115,12 +117,12 @@ class UserController extends Controller
      * @param  mixed $id
      * @return JsonResponse
      */
-    public function destroy( int $id):JsonResponse
+    public function destroy(int $id): JsonResponse
     {
         //
         //$user=User::destroy($id);
-        $user=User::find($id);
-        $result=($user)?User::where('id',$id)->update(['isDelete'=>1]):'fail';
+        $user = User::find($id);
+        $result = ($user) ? User::where('id', $id)->update(['isDelete' => 1]) : 'fail';
         return response()->json($result);
     }
 }
