@@ -95,10 +95,10 @@ class UserController extends Controller
      */
     public function update(UserUpdateRequest $request, $id)
     {
-        //
+        //thieu syntax
+
         $user=User::where('id',$id)->update(
             $request->only('first_name','last_name','phone')
-         //   [$request['email']]
         );
         return response()->json($user,Response::HTTP_ACCEPTED);
     }
