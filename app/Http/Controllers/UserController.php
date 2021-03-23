@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserCreateRequest;
+use Cassandra\Tinyint;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Pagination\Paginator;
 
 /**
  * Class UserController
@@ -30,7 +32,7 @@ class UserController extends Controller
     public function index()
     {
         //
-        $UsersList = DB::table('users')->get();
+        $UsersList = DB::table('users')->paginate(5);
 
         return response()->json($UsersList);
     }
@@ -69,7 +71,7 @@ class UserController extends Controller
 
         return response()->json([
             'result' => $result,
-            'user' => $user
+            'data' => $user
         ]);
     }
 
@@ -83,20 +85,14 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         //
-        $findUser = User::find($id);
-        $result = (empty($findUser)) ? 0 : 1;
-        $user = ($result === 0) ? false : $findUser->update([
-            'first_name' => $request['first_name'],
-            'last_name' => $request['last_name'],
-            'email' => $request['email'],
-            'phone' => $request['phone'],
-            'password' => $request['password'],
-        ]);
+        $findUser = DB::table('users')->where('id', $id);
+        //var_dump($findUser->get());die;
+        $result = (empty($findUser->get())) ? 0 : 1;
+        $user = ($result === 0) ? false : $findUser->update(
+            $request->only('first_name', 'last_name', 'phone')
+        );
 
-        return response()->json([
-            'result' => $result,
-            'user' => $user
-        ]);
+        return response()->json(User::find($id), Response::HTTP_ACCEPTED);
     }
 
     /**
@@ -108,8 +104,12 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
-        User::destroy($id);
+        $user = DB::table('users')->where('id', $id);
+        // var_dump($user);die;
+        $res = (empty($user)) ? false : $user->update([
+            'is_Delete' => 1
+        ]);
 
-        return User::find($id);
+        return response()->json(User::find($id));
     }
 }
