@@ -3,20 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserCreateRequest;
-use Cassandra\Tinyint;
+use App\Http\Requests\UserRequest;
+use App\Http\Requests\UserUpdateRequest;
+use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Routing\Controller as BaseController;
-use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Pagination\Paginator;
-use App\Http\Requests\UserRequest;
-use App\Http\Requests\UserUpdateRequest;
 
 /**
  * Class UserController
@@ -33,15 +26,24 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
-        $UsersList = DB::table('users')
-                       ->where('is_Delete', 0)
-                       ->get();
-        $result = collect($UsersList)->toArray();
+        // Controlling selected data and conditions
+        $select = [
+            'id',
+            'first_name',
+            'last_name',
+            'email',
+            'phone'
+        ];
+        $where = [
+            ['is_Delete', '=', 0],
+        ];
 
-        // var_dump($result);die;
+        // Don't care
+        $model = new User();
+        $result = $model->getListUsers($select, $where)->get();
+        $res = collect($result)->toArray();
 
-        return response()->json($result);
+        return response()->json($res);
     }
 
     /**
@@ -52,16 +54,22 @@ class UserController extends Controller
      */
     public function store(UserRequest $request)
     {
-        //
-        $user = User::create([
-            'first_name' => $request['first_name'],
-            'last_name' => $request['last_name'],
-            'email' => $request['email'],
-            'phone' => $request['phone'],
-            'password' => md5($request['password']),
-        ]);
+        //Create field
+        $create = [
+            'first_name',
+            'last_name',
+            'email',
+            'phone',
+            'password'
+        ];
 
-        return response()->json($user, 200);
+
+        //Dont care
+        $content = $request->only($create);
+        $user = DB::table('users')
+                  ->insert($content);
+
+        return response()->json($user);
     }
 
     /**
@@ -73,17 +81,23 @@ class UserController extends Controller
     public function show($id)
     {
         //
-        $user = DB::table('users')
-                  ->where('id', $id)
-                  ->where('is_Delete', 0)
-                  ->get();
-        $User=collect($user)->toArray();
-       //  var_dump($User);die;
-        $result = ($User!==[]) ? 1 : 0;
+        $select = ['*'];
+        $where = [
+            ['id', '=', $id],
+            ['is_Delete', '=', 0]
+        ];
+
+
+        //Don't care
+        $model = new User();
+        $user = $model->getListUsers($select, $where)->get();
+        $listUser = collect($user)->toArray();
+        //  var_dump($User);die;
+        $result = ($listUser !== []) ? 1 : 0;
 
         return response()->json([
             'result' => $result,
-            'data' => $user
+            'data'   => $user
         ]);
     }
 
@@ -96,22 +110,30 @@ class UserController extends Controller
      */
     public function update(UserUpdateRequest $request, $id)
     {
-        //
-        $findUser = DB::table('users')
-                      ->where('id', $id)
-                      ->where('is_Delete', 0);
+        //Select ,where, update column here
+        $select = ['*'];
+        $where = [
+            ['id', '=', $id],
+            ['is_Delete', '=', 0]
+        ];
+        $update = [
+            'first_name',
+            'last_name',
+            'phone'
+        ];
+
+
+        //Ignore it if you dont change your structure
+        $model = new User();
+        $findUser = $model->getListUsers($select, $where);
         //var_dump($findUser->get());die;
-        $result = (empty($findUser->get())) ? 0 : 1;
-        $requestContent = $request->only('first_name', 'last_name', 'phone');
+        //   $result = (empty($findUser->get())) ? 0 : 1;
+        $requestContent = $request->only($update);
         //remove null on content
         $requestContent = array_diff($requestContent, [null, ""]);
-        $user = ($result === 0)
-            ? false
-            : $findUser->update(
-                $requestContent
-            );
+        $result = $findUser->update($requestContent);
 
-        return response()->json(User::find($id), Response::HTTP_ACCEPTED);
+        return response()->json($result);
     }
 
     /**
@@ -122,14 +144,22 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        //
-        $user = DB::table('users')
-                  ->where('id', $id);
-        // var_dump($user);die;
-        $res = (empty($user)) ? false : $user->update([
+        //Select ,where, update column here
+        $select = ['*'];
+        $where = [
+            ['id', '=', $id],
+            ['is_Delete', '=', 0]
+        ];
+        $destroy = [
             'is_Delete' => 1
-        ]);
+        ];
 
-        return response()->json(User::find($id));
+        //Ignore it if you dont change your structure
+        $model = new User();
+        $user = $model->getListUsers($select, $where);
+        // var_dump($user);die;
+        $res = $user->update($destroy);
+
+        return response()->json($res);
     }
 }
