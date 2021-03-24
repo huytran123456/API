@@ -9,7 +9,6 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -28,19 +27,20 @@ class UserController extends Controller
     public function index()
     {
         // Controlling selected data and conditions
-        $Select = [
+        $select = [
             'id',
             'first_name',
             'last_name',
             'email',
             'phone'
         ];
-        $Where = [
+        $where = [
             ['is_Delete', '=', 0],
         ];
 
         // Don't care
-        $result = User::getListUsers($Select, $Where)->get();
+        $model = new User();
+        $result = $model->getListUsers($select, $where)->get();
         $res = collect($result)->toArray();
 
         return response()->json($res);
@@ -55,7 +55,7 @@ class UserController extends Controller
     public function store(UserRequest $request)
     {
         //Create field
-        $Create = [
+        $create = [
             'first_name',
             'last_name',
             'email',
@@ -65,11 +65,11 @@ class UserController extends Controller
 
 
         //Dont care
-        $content = $request->only($Create);
+        $content = $request->only($create);
         $user = DB::table('users')
                   ->insert($content);
 
-        return response()->json($user, 200);
+        return response()->json($user);
     }
 
     /**
@@ -81,18 +81,19 @@ class UserController extends Controller
     public function show($id)
     {
         //
-        $Select = ['*'];
-        $Where = [
+        $select = ['*'];
+        $where = [
             ['id', '=', $id],
             ['is_Delete', '=', 0]
         ];
 
 
         //Don't care
-        $user = User::getListUsers($Select, $Where)->get();
-        $User = collect($user)->toArray();
+        $model = new User();
+        $user = $model->getListUsers($select, $where)->get();
+        $listUser = collect($user)->toArray();
         //  var_dump($User);die;
-        $result = ($User !== []) ? 1 : 0;
+        $result = ($listUser !== []) ? 1 : 0;
 
         return response()->json([
             'result' => $result,
@@ -110,12 +111,12 @@ class UserController extends Controller
     public function update(UserUpdateRequest $request, $id)
     {
         //Select ,where, update column here
-        $Select = ['*'];
-        $Where = [
+        $select = ['*'];
+        $where = [
             ['id', '=', $id],
             ['is_Delete', '=', 0]
         ];
-        $Update = [
+        $update = [
             'first_name',
             'last_name',
             'phone'
@@ -123,15 +124,16 @@ class UserController extends Controller
 
 
         //Ignore it if you dont change your structure
-        $findUser = User::getListUsers($Select, $Where);
+        $model = new User();
+        $findUser = $model->getListUsers($select, $where);
         //var_dump($findUser->get());die;
         //   $result = (empty($findUser->get())) ? 0 : 1;
-        $requestContent = $request->only($Update);
+        $requestContent = $request->only($update);
         //remove null on content
         $requestContent = array_diff($requestContent, [null, ""]);
         $result = $findUser->update($requestContent);
 
-        return response()->json($result, Response::HTTP_ACCEPTED);
+        return response()->json($result);
     }
 
     /**
@@ -143,19 +145,20 @@ class UserController extends Controller
     public function destroy($id)
     {
         //Select ,where, update column here
-        $Select = ['*'];
-        $Where = [
+        $select = ['*'];
+        $where = [
             ['id', '=', $id],
             ['is_Delete', '=', 0]
         ];
-        $Destroy = [
+        $destroy = [
             'is_Delete' => 1
         ];
 
         //Ignore it if you dont change your structure
-        $user = User::getListUsers($Select, $Where);
+        $model = new User();
+        $user = $model->getListUsers($select, $where);
         // var_dump($user);die;
-        $res = $user->update($Destroy);
+        $res = $user->update($destroy);
 
         return response()->json($res);
     }

@@ -47,15 +47,15 @@ class User extends Authenticatable
 
     /**
      * Refactoring
-     * @param array $Select
-     * @param array $Where
+     * @param array $select
+     * @param array $where
      * @return \Illuminate\Database\Query\Builder
      */
-    public static function getListUsers(array $Select, array $Where)
+    public function getListUsers(array $select, array $where)
     {
-        $users = DB::table((new User)->getTable())
-                   ->select($Select)
-                   ->where($Where);
+        $users = DB::table($this->getTable())
+                   ->select($select)
+                   ->where($where);
 
         //  $result = collect($users)->toArray();
 
