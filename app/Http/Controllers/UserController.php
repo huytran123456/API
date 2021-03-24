@@ -39,6 +39,8 @@ class UserController extends Controller
                        ->get();
         $result = collect($UsersList)->toArray();
 
+        // var_dump($result);die;
+
         return response()->json($result);
     }
 
@@ -75,7 +77,9 @@ class UserController extends Controller
                   ->where('id', $id)
                   ->where('is_Delete', 0)
                   ->get();
-        $result = (!empty($user)) ? 1 : 0;
+        $User=collect($user)->toArray();
+       //  var_dump($User);die;
+        $result = ($User!==[]) ? 1 : 0;
 
         return response()->json([
             'result' => $result,
