@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable
 {
@@ -43,4 +43,22 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+
+    /**
+     * Refactoring
+     * @param array $Select
+     * @param array $Where
+     * @return \Illuminate\Database\Query\Builder
+     */
+    public static function getListUsers(array $Select, array $Where)
+    {
+        $users = DB::table((new User)->getTable())
+                   ->select($Select)
+                   ->where($Where);
+
+        //  $result = collect($users)->toArray();
+
+        return $users;
+    }
 }
