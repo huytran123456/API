@@ -36,9 +36,12 @@ class UserController extends Controller
         //
         $UsersList = DB::table('users')
                        ->where('is_Delete', 0)
-                       ->paginate(5);
+                       ->get();
+        $result = collect($UsersList)->toArray();
 
-        return response()->json($UsersList);
+        // var_dump($result);die;
+
+        return response()->json($result);
     }
 
     /**
@@ -55,10 +58,10 @@ class UserController extends Controller
             'last_name' => $request['last_name'],
             'email' => $request['email'],
             'phone' => $request['phone'],
-            'password' => $request['password'],
+            'password' => md5($request['password']),
         ]);
 
-        return response()->json($user, 201);
+        return response()->json($user, 200);
     }
 
     /**
@@ -74,7 +77,9 @@ class UserController extends Controller
                   ->where('id', $id)
                   ->where('is_Delete', 0)
                   ->get();
-        $result = (!empty($user)) ? 1 : 0;
+        $User=collect($user)->toArray();
+       //  var_dump($User);die;
+        $result = ($User!==[]) ? 1 : 0;
 
         return response()->json([
             'result' => $result,
@@ -97,9 +102,14 @@ class UserController extends Controller
                       ->where('is_Delete', 0);
         //var_dump($findUser->get());die;
         $result = (empty($findUser->get())) ? 0 : 1;
-        $user = ($result === 0) ? false : $findUser->update(
-            $request->only('first_name', 'last_name', 'phone')
-        );
+        $requestContent = $request->only('first_name', 'last_name', 'phone');
+        //remove null on content
+        $requestContent = array_diff($requestContent, [null, ""]);
+        $user = ($result === 0)
+            ? false
+            : $findUser->update(
+                $requestContent
+            );
 
         return response()->json(User::find($id), Response::HTTP_ACCEPTED);
     }
