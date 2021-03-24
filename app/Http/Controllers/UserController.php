@@ -61,7 +61,7 @@ class UserController extends Controller
             'password' => md5($request['password']),
         ]);
 
-        return response()->json($user, 201);
+        return response()->json($user, 200);
     }
 
     /**
