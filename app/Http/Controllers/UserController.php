@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Pagination\Paginator;
+use App\Http\Requests\UserRequest;
+use App\Http\Requests\UserUpdateRequest;
 
 /**
  * Class UserController
@@ -33,8 +35,8 @@ class UserController extends Controller
     {
         //
         $UsersList = DB::table('users')
-            ->where('is_Delete', 0)
-            ->paginate(5);
+                       ->where('is_Delete', 0)
+                       ->paginate(5);
 
         return response()->json($UsersList);
     }
@@ -45,7 +47,7 @@ class UserController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(UserRequest $request)
     {
         //
         $user = User::create([
@@ -69,9 +71,9 @@ class UserController extends Controller
     {
         //
         $user = DB::table('users')
-            ->where('id', $id)
-            ->where('is_Delete', 0)
-            ->get();
+                  ->where('id', $id)
+                  ->where('is_Delete', 0)
+                  ->get();
         $result = (!empty($user)) ? 1 : 0;
 
         return response()->json([
@@ -87,12 +89,12 @@ class UserController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UserUpdateRequest $request, $id)
     {
         //
         $findUser = DB::table('users')
-            ->where('id', $id)
-            ->where('is_Delete', 0);
+                      ->where('id', $id)
+                      ->where('is_Delete', 0);
         //var_dump($findUser->get());die;
         $result = (empty($findUser->get())) ? 0 : 1;
         $user = ($result === 0) ? false : $findUser->update(
@@ -111,7 +113,8 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
-        $user = DB::table('users')->where('id', $id);
+        $user = DB::table('users')
+                  ->where('id', $id);
         // var_dump($user);die;
         $res = (empty($user)) ? false : $user->update([
             'is_Delete' => 1
