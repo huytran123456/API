@@ -32,7 +32,9 @@ class UserController extends Controller
     public function index()
     {
         //
-        $UsersList = DB::table('users')->paginate(5);
+        $UsersList = DB::table('users')
+            ->where('is_Delete', 0)
+            ->paginate(5);
 
         return response()->json($UsersList);
     }
@@ -66,7 +68,10 @@ class UserController extends Controller
     public function show($id)
     {
         //
-        $user = User::find($id);
+        $user = DB::table('users')
+            ->where('id', $id)
+            ->where('is_Delete', 0)
+            ->get();
         $result = (!empty($user)) ? 1 : 0;
 
         return response()->json([
@@ -85,7 +90,9 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         //
-        $findUser = DB::table('users')->where('id', $id);
+        $findUser = DB::table('users')
+            ->where('id', $id)
+            ->where('is_Delete', 0);
         //var_dump($findUser->get());die;
         $result = (empty($findUser->get())) ? 0 : 1;
         $user = ($result === 0) ? false : $findUser->update(
