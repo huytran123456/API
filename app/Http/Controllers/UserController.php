@@ -126,8 +126,6 @@ class UserController extends Controller
         //Ignore it if you dont change your structure
         $model = new User();
         $findUser = $model->getListUsers($select, $where);
-        //var_dump($findUser->get());die;
-        //   $result = (empty($findUser->get())) ? 0 : 1;
         $requestContent = $request->only($update);
         //remove null on content
         $requestContent = array_diff($requestContent, [null, ""]);
