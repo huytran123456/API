@@ -35,7 +35,7 @@ class UserController extends Controller
     {
         //
         $UsersList = DB::table('users')
-                       ->where('is_Delete', 0)
+                       ->where('is_delete', 0)
                        ->paginate(5);
 
         return response()->json($UsersList);
@@ -58,7 +58,7 @@ class UserController extends Controller
             'password' => $request['password'],
         ]);
 
-        return response()->json($user, 201);
+        return response()->json($user);
     }
 
     /**
@@ -72,7 +72,7 @@ class UserController extends Controller
         //
         $user = DB::table('users')
                   ->where('id', $id)
-                  ->where('is_Delete', 0)
+                  ->where('is_delete', 0)
                   ->get();
         $result = (!empty($user)) ? 1 : 0;
 
@@ -94,7 +94,7 @@ class UserController extends Controller
         //
         $findUser = DB::table('users')
                       ->where('id', $id)
-                      ->where('is_Delete', 0);
+                      ->where('is_delete', 0);
         //var_dump($findUser->get());die;
         $result = (empty($findUser->get())) ? 0 : 1;
         $user = ($result === 0) ? false : $findUser->update(
@@ -117,7 +117,7 @@ class UserController extends Controller
                   ->where('id', $id);
         // var_dump($user);die;
         $res = (empty($user)) ? false : $user->update([
-            'is_Delete' => 1
+            'is_delete' => 1
         ]);
 
         return response()->json(User::find($id));
