@@ -3,20 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserCreateRequest;
-use Cassandra\Tinyint;
+use App\Http\Requests\UserRequest;
+use App\Http\Requests\UserUpdateRequest;
+use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Routing\Controller as BaseController;
-use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Pagination\Paginator;
-use App\Http\Requests\UserRequest;
-use App\Http\Requests\UserUpdateRequest;
 
 /**
  * Class UserController
@@ -55,10 +48,10 @@ class UserController extends Controller
         //
         $user = User::create([
             'first_name' => $request['first_name'],
-            'last_name' => $request['last_name'],
-            'email' => $request['email'],
-            'phone' => $request['phone'],
-            'password' => md5($request['password']),
+            'last_name'  => $request['last_name'],
+            'email'      => $request['email'],
+            'phone'      => $request['phone'],
+            'password'   => md5($request['password']),
         ]);
 
         return response()->json($user, 200);
@@ -77,13 +70,13 @@ class UserController extends Controller
                   ->where('id', $id)
                   ->where('is_Delete', 0)
                   ->get();
-        $User=collect($user)->toArray();
-       //  var_dump($User);die;
-        $result = ($User!==[]) ? 1 : 0;
+        $User = collect($user)->toArray();
+        //  var_dump($User);die;
+        $result = ($User !== []) ? 1 : 0;
 
         return response()->json([
             'result' => $result,
-            'data' => $user
+            'data'   => $user
         ]);
     }
 
@@ -105,13 +98,9 @@ class UserController extends Controller
         $requestContent = $request->only('first_name', 'last_name', 'phone');
         //remove null on content
         $requestContent = array_diff($requestContent, [null, ""]);
-        $user = ($result === 0)
-            ? false
-            : $findUser->update(
-                $requestContent
-            );
+        $result = $findUser->update($requestContent);
 
-        return response()->json(User::find($id), Response::HTTP_ACCEPTED);
+        return response()->json($result);
     }
 
     /**
