@@ -28,7 +28,7 @@ class UserController extends Controller
     {
         //
         $UsersList = DB::table('users')
-                       ->where('is_Delete', 0)
+                       ->where('is_delete', 0)
                        ->get();
         $result = collect($UsersList)->toArray();
 
@@ -68,7 +68,7 @@ class UserController extends Controller
         //
         $user = DB::table('users')
                   ->where('id', $id)
-                  ->where('is_Delete', 0)
+                  ->where('is_delete', 0)
                   ->get();
         $User = collect($user)->toArray();
         //  var_dump($User);die;
