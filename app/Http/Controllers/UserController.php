@@ -99,7 +99,7 @@ class UserController extends Controller
         //
         $findUser = DB::table('users')
                       ->where('id', $id)
-                      ->where('is_Delete', 0);
+                      ->where('is_delete', 0);
         //var_dump($findUser->get());die;
         $result = (empty($findUser->get())) ? 0 : 1;
         $requestContent = $request->only('first_name', 'last_name', 'phone');
@@ -127,7 +127,7 @@ class UserController extends Controller
                   ->where('id', $id);
         // var_dump($user);die;
         $res = (empty($user)) ? false : $user->update([
-            'is_Delete' => 1
+            'is_delete' => 1
         ]);
 
         return response()->json(User::find($id));
