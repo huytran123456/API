@@ -35,7 +35,7 @@ class UserController extends Controller
             'phone'
         ];
         $where = [
-            ['is_Delete', '=', 0],
+            ['is_delete', '=', 0],
         ];
 
         // Don't care
@@ -84,7 +84,7 @@ class UserController extends Controller
         $select = ['*'];
         $where = [
             ['id', '=', $id],
-            ['is_Delete', '=', 0]
+            ['is_delete', '=', 0]
         ];
 
 
@@ -114,7 +114,7 @@ class UserController extends Controller
         $select = ['*'];
         $where = [
             ['id', '=', $id],
-            ['is_Delete', '=', 0]
+            ['is_delete', '=', 0]
         ];
         $update = [
             'first_name',
@@ -148,10 +148,10 @@ class UserController extends Controller
         $select = ['*'];
         $where = [
             ['id', '=', $id],
-            ['is_Delete', '=', 0]
+            ['is_delete', '=', 0]
         ];
         $destroy = [
-            'is_Delete' => 1
+            'is_delete' => 1
         ];
 
         //Ignore it if you dont change your structure
