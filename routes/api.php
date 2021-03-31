@@ -1,7 +1,7 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,7 +20,9 @@ Route::get('users/{id}', [UserController::class, 'show']);
 // Save user
 Route::post('users', [UserController::class, 'store']);
 // Update user
-//Route::put(&#39;users/{id}&#39;, &#39;\App\Http\Controllers\UserController@update&#39;);
 Route::post('users/{id}', [UserController::class, 'update']);
 // Delete user
 Route::post('users/delete/{id}', [UserController::class, 'destroy']);
+//Login
+Route::post('auth/login', [AuthController::class, 'login']);
+
