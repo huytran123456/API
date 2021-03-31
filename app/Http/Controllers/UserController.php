@@ -49,7 +49,7 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param App\Http\Requests\UserRequest $request
      * @return \Illuminate\Http\Response
      */
     public function store(UserRequest $request)
@@ -66,6 +66,7 @@ class UserController extends Controller
 
         //Dont care
         $content = $request->only($create);
+        $content['password'] = bcrypt($content['password']);
         $user = DB::table('users')
                   ->insert($content);
 
@@ -104,7 +105,7 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param App\Http\Requests\UserUpdateRequest $request
      * @param int $id
      * @return \Illuminate\Http\Response
      */
