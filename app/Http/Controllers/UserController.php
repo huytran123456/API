@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -28,11 +29,11 @@ class UserController extends Controller
     {
         // Controlling selected data and conditions
         $select = [
-            'id',
-            'first_name',
-            'last_name',
-            'email',
-            'phone'
+            'id as ID',
+            'first_name as First Name',
+            'last_name as Last Name',
+            'email as Email',
+            'phone as Phone'
         ];
         $where = [
             ['is_delete', '=', 0],
@@ -79,10 +80,17 @@ class UserController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request)
     {
-        //
-        $select = ['*'];
+        //Get user id
+        $id = $request->user()->id;
+        //Select ,where column here
+        $select = [
+            'id as ID',
+            'first_name as First Name',
+            'last_name as Last Name',
+            'email as Email'
+        ];
         $where = [
             ['id', '=', $id],
             ['is_delete', '=', 0]
@@ -109,10 +117,15 @@ class UserController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UserUpdateRequest $request, $id)
+    public function update(UserUpdateRequest $request)
     {
+        //Get id from user
+        $id = $request->user()->id;
         //Select ,where, update column here
-        $select = ['*'];
+        $select = ['first_name',
+            'last_name',
+            'phone'
+        ];
         $where = [
             ['id', '=', $id],
             ['is_delete', '=', 0]
@@ -127,12 +140,11 @@ class UserController extends Controller
         //Ignore it if you dont change your structure
         $model = new User();
         $findUser = $model->getListUsers($select, $where);
-        //var_dump($findUser->get());die;
-        //   $result = (empty($findUser->get())) ? 0 : 1;
         $requestContent = $request->only($update);
         //remove null on content
         $requestContent = array_diff($requestContent, [null, ""]);
         $result = $findUser->update($requestContent);
+
 
         return response()->json($result);
     }
@@ -146,7 +158,7 @@ class UserController extends Controller
     public function destroy($id)
     {
         //Select ,where, update column here
-        $select = ['*'];
+        $select = ['is_delete'];
         $where = [
             ['id', '=', $id],
             ['is_delete', '=', 0]

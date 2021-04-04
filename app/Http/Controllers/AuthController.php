@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\AuthRequest;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
 
     /**
-     * @param Request $request
+     * @param AuthRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function login(Request $request)
+    public function login(AuthRequest $request)
     {
         //Custom your response user detail here if login successful
-        $user=[
+        $user = [
             'first_name',
             'last_name'
         ];
@@ -28,7 +28,9 @@ class AuthController extends Controller
             return response()->json(['message' => 'Invalid Credentials']);
         }
         $accessToken = Auth::user()->createToken('authToken')->accessToken;
-        $auth_user=Auth::user()->only($user);
-        return response()->json(['user' => $auth_user, 'access_token' => $accessToken]);
+        $auth_user = Auth::user()->only($user);
+
+        return response()
+            ->json(['user' => $auth_user, 'access_token' => $accessToken,]);
     }
 }
