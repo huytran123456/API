@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\FileRequest;
 use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Image;
 
 class ProfileController extends Controller
@@ -33,7 +34,9 @@ class ProfileController extends Controller
 //            ->update(['avatar'=>$img]);
 
         $img = $request->user_image;
-        $result = $img->move('C:/xampp/htdocs/', $img->getCLientOriginalName());
+        $fileName = $img->getClientOriginalName();
+//        $result = $img->move('C:/xampp/htdocs/', $img->getCLientOriginalName());
+        $result = Storage::disk('huy')->put($fileName, file_get_contents($img->getRealPath()));
 
         return response()->json([
             'result' => $result

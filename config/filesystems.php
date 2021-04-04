@@ -32,7 +32,7 @@ return [
         //My custom storage path
         'huy' => [
             'driver' => 'local',
-            'root'   => storage_path('C:/xampp/htdocs/'),
+            'root'   => storage_path('app/images'),
         ],
 
         'local' => [
