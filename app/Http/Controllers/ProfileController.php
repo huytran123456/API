@@ -18,6 +18,14 @@ class ProfileController extends Controller
     public function upload_image(FileRequest $request)
     {
         $img = $request->user_image;
+        $image = Image::make($img);
+        $image->backup();
+        $res = $image->resize(300, null, function ($constraint) {
+            $constraint->aspectRatio();
+        })->save('C:/xampp/htdocs/large.png');
+        $res->reset()->save('C:/xampp/htdocs/backup.png');
+        var_dump($res);
+        die;
         $fileName = $img->getClientOriginalName();
 //        $result = $img->move('C:/xampp/htdocs/', $img->getCLientOriginalName());
         $result = Storage::disk('huy')->put($fileName, file_get_contents($img->getRealPath()));
@@ -39,37 +47,4 @@ class ProfileController extends Controller
         return Storage::disk('huy')->download('42tpwq.png');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
 }
