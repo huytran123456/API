@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Request;
 
 class UserRequest extends FormRequest
 {
@@ -27,10 +26,10 @@ class UserRequest extends FormRequest
         return [
             //
             'first_name' => 'required',
-            'last_name' => 'required',
-            'email' => 'required|email|unique:App\Models\User,email',
-            'phone' => 'required',
-            'password' => 'required'
+            'last_name'  => 'required',
+            'email'      => 'required|email|unique:App\Models\User,email',
+            'phone'      => 'required',
+            'password'   => 'required'
         ];
     }
 
@@ -38,11 +37,11 @@ class UserRequest extends FormRequest
     {
         return [
             'first_name.required' => 'A first_name is required',
-            'last_name.required' => 'A last_name is required',
-            'email.required' => 'An email is required',
-            'email.email' => 'An email is invalid',
-            'phone.required' => 'A phone is required',
-            'password.required' => 'A email is required',
+            'last_name.required'  => 'A last_name is required',
+            'email.required'      => 'An email is required',
+            'email.email'         => 'An email is invalid',
+            'phone.required'      => 'A phone is required',
+            'password.required'   => 'A email is required',
         ];
     }
 }
