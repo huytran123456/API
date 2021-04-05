@@ -25,7 +25,7 @@ class FileRequest extends FormRequest
     {
         return [
             //
-            'user_image' => 'image|max:2048',
+            'user_image' => 'image|max:2048|mimes:jpeg,png|mimetypes:image/jpeg,image/png',
         ];
     }
 

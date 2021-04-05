@@ -17,22 +17,6 @@ class ProfileController extends Controller
      */
     public function upload_image(FileRequest $request)
     {
-//        //
-//        // Storage::disk('local')->put('example.txt', 'Contents');
-//        $validated = $request->validate([
-//            'id'    => 'string|max:40',
-//            'user_image' => 'image|max:2048',
-//        ]);
-//        dd($request->user_image);
-//        $image=$request->user_image;
-//      //  $img=Image::make($image);
-//     //   Response::make($img->encode('jpeg'));
-//        $img=base64_encode($image);
-//        //var_dump($img);die;
-//        //dd($img);
-//        $result=DB::table('users')->where('id',$request->id)
-//            ->update(['avatar'=>$img]);
-
         $img = $request->user_image;
         $fileName = $img->getClientOriginalName();
 //        $result = $img->move('C:/xampp/htdocs/', $img->getCLientOriginalName());
@@ -52,6 +36,7 @@ class ProfileController extends Controller
     public function get_image(Request $request)
     {
         //
+        return Storage::disk('huy')->download('42tpwq.png');
     }
 
     /**
