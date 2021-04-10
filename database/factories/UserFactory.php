@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
 class UserFactory extends Factory
 {
@@ -24,11 +23,14 @@ class UserFactory extends Factory
     {
         return [
             'first_name' => $this->faker->name,
-            'last_name' => $this->faker->name,
-            'email' => $this->faker->unique()->safeEmail,
-            'phone' => $this->faker->phoneNumber,
-            'password' => 'password', // password
+            'last_name'  => $this->faker->name,
+            'email'      => $this->faker->unique()->safeEmail,
+            'phone'      => $this->faker->phoneNumber,
+            'password'   => bcrypt('password'), // password
+            'gender'     => rand(0, 2) % 3,
+            'dob'        => $this->faker->dateTime,
         ];
+
     }
 
     /**

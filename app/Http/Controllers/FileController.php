@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Image;
 
-class ProfileController extends Controller
+class FileController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -20,15 +20,13 @@ class ProfileController extends Controller
         $img = $request->user_image;
         $image = Image::make($img);
         $image->backup();
-        $res = $image->resize(300, null, function ($constraint) {
+        $res = $image->resize(400, null, function ($constraint) {
             $constraint->aspectRatio();
-        })->save('C:/xampp/htdocs/large.png');
-        $res->reset()->save('C:/xampp/htdocs/backup.png');
-        var_dump($res);
-        die;
+        })->encode();
+        //$res->reset()->save('C:/xampp/htdocs/backup.png');
         $fileName = $img->getClientOriginalName();
-//        $result = $img->move('C:/xampp/htdocs/', $img->getCLientOriginalName());
-        $result = Storage::disk('huy')->put($fileName, file_get_contents($img->getRealPath()));
+        //$result = $img->move('C:/xampp/htdocs/', $img->getCLientOriginalName());
+        $result = Storage::disk('huy')->put('test' . $fileName, $res);
 
         return response()->json([
             'result' => $result

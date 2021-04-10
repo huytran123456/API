@@ -17,6 +17,8 @@ class User extends Authenticatable
      * @var string
      */
     protected $table = 'users';
+
+    //Alias name for table
     /**
      * The attributes that are mass assignable.
      *
@@ -30,7 +32,6 @@ class User extends Authenticatable
         'phone',
         'password',
     ];
-
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -40,7 +41,6 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
-
     /**
      * The attributes that should be cast to native types.
      *
@@ -50,21 +50,33 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-
     /**
      * Refactoring
      * @param array $select
      * @param array $where
      * @return \Illuminate\Database\Query\Builder
      */
-    public function getListUsers(array $select, array $where)
+    public function getListUsers(array $select, array $where, array $joinTable = [])
     {
-        $users = DB::table($this->getTable())
+
+        $users = DB::table($this->alias())
                    ->select($select)
                    ->where($where);
-
-        //  $result = collect($users)->toArray();
+        if ($joinTable !== []) {
+            foreach ($joinTable as $j) {
+                $users = $users->leftJoin($j[0], $j[1], $j[2], $j[3]);
+            }
+        }
 
         return $users;
+    }
+
+    /**
+     * Alias name for table
+     * @return string
+     */
+    protected function alias(): string
+    {
+        return $this->getTable() . ' as u';
     }
 }
