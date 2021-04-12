@@ -17,23 +17,15 @@ class ProfileController extends Controller
      */
     public function upload_image(FileRequest $request)
     {
-//        //
-//        // Storage::disk('local')->put('example.txt', 'Contents');
-//        $validated = $request->validate([
-//            'id'    => 'string|max:40',
-//            'user_image' => 'image|max:2048',
-//        ]);
-//        dd($request->user_image);
-//        $image=$request->user_image;
-//      //  $img=Image::make($image);
-//     //   Response::make($img->encode('jpeg'));
-//        $img=base64_encode($image);
-//        //var_dump($img);die;
-//        //dd($img);
-//        $result=DB::table('users')->where('id',$request->id)
-//            ->update(['avatar'=>$img]);
-
         $img = $request->user_image;
+        $image = Image::make($img);
+        $image->backup();
+        $res = $image->resize(300, null, function ($constraint) {
+            $constraint->aspectRatio();
+        })->save('C:/xampp/htdocs/large.png');
+        $res->reset()->save('C:/xampp/htdocs/backup.png');
+        var_dump($res);
+        die;
         $fileName = $img->getClientOriginalName();
 //        $result = $img->move('C:/xampp/htdocs/', $img->getCLientOriginalName());
         $result = Storage::disk('huy')->put($fileName, file_get_contents($img->getRealPath()));
@@ -52,39 +44,7 @@ class ProfileController extends Controller
     public function get_image(Request $request)
     {
         //
+        return Storage::disk('huy')->download('42tpwq.png');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
 }
