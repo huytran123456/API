@@ -10,6 +10,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -20,31 +21,60 @@ class UserController extends Controller
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
+
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
         // Controlling selected data and conditions
         $select = [
-            'id as ID',
-            'first_name as First Name',
-            'last_name as Last Name',
-            'email as Email',
-            'phone as Phone'
+            'u.id as ID',
+            'u.first_name as First Name',
+            'u.last_name as Last Name',
+            'u.email as Email',
+            'u.phone as Phone',
+            'u.dob',
+            'u.gender_id as gender',
+            'u.country_id as country',
+            DB::raw("CONCAT(
+                '[',
+                GROUP_CONCAT(
+                    JSON_OBJECT(
+                        'title_id', t . title_id,
+                        'title_name', t . title_name)), ']') as titles")
         ];
         $where = [
-            ['is_delete', '=', 0],
+            ['u.is_delete', '=', 0],
+        ];
+        $joinTable = [
+            ['user_titles as ut', 'u.id', '=', 'ut.user_id'],
+            ['titles as t', 'ut.title_id', '=', 't.title_id']
+        ];
+        $groupBy = [
+            'u.id'
         ];
 
         // Don't care
         $model = new User();
-        $result = $model->getListUsers($select, $where)->get();
-        $res = collect($result)->toArray();
+        $resultQuery = $model->getListUsers($select, $where, $joinTable);
+        $resultQuery = $resultQuery->groupBy($groupBy)->get();
+        $result = collect($resultQuery);
+        $genders = config('datasources.genders');
+        $countries = config('datasources.countries');
+        $genders = collect($genders)->keyBy('gender_id');
+        $result = $result->map(function ($x) use ($genders, $countries) {
+            $t = collect(json_decode($x->titles));
+            $t = $t->sortBy('title_id')->values()->all();
+            $x->titles = $t;
+            $des = $genders->get($x->gender);
+            $x->gender = $des['gender_name'];
+            $x->country = $countries[$x->country];
 
-        return response()->json($res);
+            return $x;
+        }, $result);
+
+        return response()->json($result);
     }
 
     /**
@@ -86,28 +116,40 @@ class UserController extends Controller
         $id = $request->user()->id;
         //Select ,where column here
         $select = [
-            'id as ID',
-            'first_name as First Name',
-            'last_name as Last Name',
-            'email as Email'
+            'users.id as ID',
+            'users.first_name as First Name',
+            'users.last_name as Last Name',
+            'users.email as Email',
+            'users.phone as Phone',
+            'users.dob',
+            'users.gender',
+        ];
+        $selectTitle = [
+            'title_name',
+            'title_id',
+            'user_id'
         ];
         $where = [
             ['id', '=', $id],
             ['is_delete', '=', 0]
         ];
-
+        $joinTable = [
+            ['user_titles', 'users.id', '=', 'user_titles.user_id'],
+            ['titles', 'user_titles.title_id', '=', 'titles.title_id']
+        ];
 
         //Don't care
         $model = new User();
-        $user = $model->getListUsers($select, $where)->get();
-        $listUser = collect($user)->toArray();
-        //  var_dump($User);die;
-        $result = ($listUser !== []) ? 1 : 0;
+        $resultQuery = $model->getListUsers($select, $where)->get();
+        $title = $model->getListUsers($selectTitle, $where, $joinTable)->get();
+        $titleUser = collect($title)->groupBy('user_id');
+        $result = collect($resultQuery)->toArray();
+        foreach ($result as & $re) {
+            $re = (array)$re;
+            $re = Arr::add($re, 'titles', $titleUser[$re['ID']]);
+        }
 
-        return response()->json([
-            'result' => $result,
-            'data'   => $user
-        ]);
+        return response()->json($result);
     }
 
     /**

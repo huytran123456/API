@@ -3,7 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\FileController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -30,6 +30,6 @@ Route::post('users/delete/{id}', [UserController::class, 'destroy']);
 //Login
 Route::post('auth/login', [AuthController::class, 'login']);
 //Upload image
-Route::post('users/uploadImg', [ProfileController::class, 'upload_image']);
+Route::post('users/uploadImg', [FileController::class, 'upload_image']);
 //Get image
-Route::get('users/getImg', [ProfileController::class, 'get_image']);
+Route::get('users/getImg', [FileController::class, 'get_image']);
